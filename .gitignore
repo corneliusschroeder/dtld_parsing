@@ -1,5 +1,8 @@
 bin
 build
 lib
+dist
+python/dtld_parsing/__pycache__
+python/dtld_parsing.egg-info
 *.*user
 *.*~
