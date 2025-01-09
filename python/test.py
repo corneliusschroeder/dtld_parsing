@@ -73,7 +73,7 @@ import os
 
 # Read the CSV file
 # Update with your CSV file path
-csv_file = '/home/ga67jup/tl/EXPORT/test_annotations.csv'
+csv_file = '/home/ga67jup/tl/tl_dataset/test_annotations.csv'
 df = pd.read_csv(csv_file)
 
 # Get unique image IDs
@@ -83,7 +83,7 @@ unique_image_ids = df['ImageID'].unique()
 for image_id in unique_image_ids:
     # Open the image
     image = cv2.imread(os.path.join(
-        '/home/ga67jup/tl/EXPORT/test', str(image_id) + '.jpg'))
+        '/home/ga67jup/tl/tl_dataset/test', str(image_id) + '.jpg'))
     try:
         height, width, _ = image.shape
     except:

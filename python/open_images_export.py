@@ -1,5 +1,6 @@
 from __future__ import print_function
 import warnings
+import sys
 import argparse
 import os
 import numpy as np
@@ -40,6 +41,7 @@ def main(args):
     train_data = {k: [] for k in keys}
     test_data = {k: [] for k in keys}
     val_data = {k: [] for k in keys}
+    idx_d = 0
 
     for label_file in os.listdir(args.label_file_dir):
         # Load database
@@ -48,7 +50,7 @@ def main(args):
         if not database.open(args.data_base_dir):
             continue
 
-        for idx_d, img in enumerate(database.images):
+        for img in database.images:
             status, full_image = img.get_image()
             if not status:
                 continue
@@ -63,7 +65,7 @@ def main(args):
                     y_min = (o.y - 0.05 * o.width) / height
                     y_max = (o.y + 1.05 * o.height) / height
 
-                    if o.attributes['relevance'] == 'relevant' and o.attributes['direction'] == 'front':
+                    if o.attributes['direction'] == 'front':
                         match split:
                             case 'train':
                                 train_data['ImageID'].append(idx_d)
@@ -133,9 +135,17 @@ def main(args):
                     case 'test':
                         cv2.imwrite(os.path.join(
                             test_dir, f"{idx_d}.jpg"), full_image)
-            if idx_d == 100:
-                break
+                idx_d += 1
+            if idx_d == 2000:
+                write_annotation_csv(
+                    export_dir, keys, train_data, test_data, val_data)
+                sys.exit()
 
+    write_annotation_csv(
+        export_dir, keys, train_data, test_data, val_data)
+
+
+def write_annotation_csv(export_dir, keys, train_data, test_data, val_data):
     with open(os.path.join(export_dir, "train_annotations.csv"), "w") as outfile:
         writer = csv.writer(outfile, delimiter=",")
         writer.writerow(keys)
